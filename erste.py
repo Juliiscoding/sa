@@ -19,7 +19,7 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    st.title("Willkommen bei deinem SaaS AI-Dashboard")
+    st.title("You´re all in ONE Retail AI - Solution aus dem Hause Hyperion")
     st.subheader("Login")
     username = st.text_input("Benutzername")
     password = st.text_input("Passwort", type="password")

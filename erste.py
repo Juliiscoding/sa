@@ -48,14 +48,9 @@ if "authenticated" not in st.session_state:
 
 if not st.session_state.authenticated:
     # Logo anzeigen
-    st.markdown(
-        """
-        <div class="logo-container">
-            <img src="images/your_logo.png" alt="Logo">
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    st.image("images/your_logo.png", use_column_width=True)  # Nutze st.image für lokale Dateien
+    st.markdown('</div>', unsafe_allow_html=True)
 
     # Anmeldemaske
     st.markdown(

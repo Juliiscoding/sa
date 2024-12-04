@@ -51,7 +51,7 @@ if not st.session_state.authenticated:
     st.markdown(
         """
         <div class="logo-container">
-            <img src="images/logo.png" alt="Logo">
+            <img src="images/your_logo.png" alt="Logo">
         </div>
         """,
         unsafe_allow_html=True,

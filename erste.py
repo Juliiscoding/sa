@@ -1,47 +1,49 @@
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
 
-# Titel der App
-st.title("KPI-Dashboard für Limitplanung")
+# Logo anzeigen
+st.image("images/logo.png", width=200)  # Stelle sicher, dass "logo.png" im Ordner "images" ist.
 
-# Daten hochladen
-st.sidebar.header("Daten hochladen")
-uploaded_file = st.sidebar.file_uploader("Laden Sie eine Excel-Datei hoch", type=["xlsx"])
+# Dummy-Benutzerdaten
+USER_CREDENTIALS = {
+    "admin": "1234",
+    "user1": "password1"
+}
 
-if uploaded_file:
-    # Excel-Daten laden
-    sheet_name = st.sidebar.text_input("Sheet-Name eingeben", "Limit")
-    data = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=3)
+# Funktion zur Überprüfung der Anmeldedaten
+def check_login(username, password):
+    return USER_CREDENTIALS.get(username) == password
 
-    # KPI-Berechnungen
-    data["Deckungsbeitrag"] = data["Plan_Umsatz_VK"] - data["Plan_Umsatz_EK"]
-    data["Lagerumschlagsgeschwindigkeit"] = data["Plan_Umsatz_EK"] / (data["Limit_Verfügbar"] * 0.5)
+# Anmeldemaske
+if "authenticated" not in st.session_state:
+    st.session_state.authenticated = False
 
-    # KPIs anzeigen
-    st.header("KPIs")
-    st.metric("Durchschnittlicher Deckungsbeitrag", f"{data['Deckungsbeitrag'].mean():,.2f} €")
-    st.metric(
-        "Durchschnittliche Lagerumschlagsgeschwindigkeit",
-        f"{data['Lagerumschlagsgeschwindigkeit'].mean():.2f}",
-    )
+if not st.session_state.authenticated:
+    st.title("Willkommen bei deinem SaaS AI-Dashboard")
+    st.subheader("Login")
+    username = st.text_input("Benutzername")
+    password = st.text_input("Passwort", type="password")
+    login_button = st.button("Anmelden")
 
-    # Kategorien filtern
-    category = st.selectbox("Kategorie auswählen", data["Description"].dropna().unique())
-    filtered_data = data[data["Description"] == category]
-
-    # Diagramm: Lagerumschlagsgeschwindigkeit
-    st.subheader("Lagerumschlagsgeschwindigkeit pro Kategorie")
-    fig, ax = plt.subplots()
-    ax.bar(data["Description"], data["Lagerumschlagsgeschwindigkeit"], color="skyblue")
-    ax.set_title("Lagerumschlagsgeschwindigkeit")
-    ax.set_xlabel("Kategorie")
-    ax.set_ylabel("LUG")
-    plt.xticks(rotation=45, ha="right")
-    st.pyplot(fig)
-
-    # Tabelle anzeigen
-    st.subheader(f"Daten für Kategorie: {category}")
-    st.write(filtered_data)
+    if login_button:
+        if check_login(username, password):
+            st.session_state.authenticated = True
+            st.success(f"Willkommen, {username}!")
+        else:
+            st.error("Ungültige Anmeldedaten. Bitte erneut versuchen.")
 else:
-    st.info("Laden Sie eine Excel-Datei hoch, um zu starten.")
+    # Hauptinhalt der App (Dashboard)
+    st.title("KPI-Dashboard für Limitplanung")
+
+    # Hochladen einer Excel-Datei
+    uploaded_file = st.file_uploader("Laden Sie eine Excel-Datei hoch", type=["xlsx"])
+    if uploaded_file:
+        sheet_name = st.sidebar.text_input("Sheet-Name eingeben", "Limit")
+        data = pd.read_excel(uploaded_file, sheet_name=sheet_name, skiprows=1)
+        st.write("Hochgeladene Daten:")
+        st.dataframe(data)
+
+        # Beispiel für KPI-Berechnungen
+        data["Deckungsbeitrag"] = data["Plan_Umsatz_VK"] - data["Plan_Umsatz_EK"]
+        st.write("Berechnete KPIs:")
+        st.dataframe(data)

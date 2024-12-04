@@ -1,8 +1,36 @@
 import streamlit as st
 import pandas as pd
 
-# Logo anzeigen
-st.image("images/logo.png", width=200)  # Stelle sicher, dass "logo.png" im Ordner "images" ist.
+# CSS für zentriertes Layout und responsives Design
+st.markdown(
+    """
+    <style>
+    /* Gesamte Seite zentrieren */
+    .stApp {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        height: 100vh;
+    }
+
+    /* Logo anpassen */
+    .logo-container img {
+        max-width: 50%; /* Passt das Logo an die Fenstergröße an */
+        height: auto;
+        margin-bottom: 20px;
+    }
+
+    /* Anmeldemaske zentriert unterhalb des Logos */
+    .login-container {
+        text-align: center;
+        width: 100%;
+        max-width: 400px; /* Maximale Breite der Anmeldemaske */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 # Dummy-Benutzerdaten
 USER_CREDENTIALS = {
@@ -14,13 +42,30 @@ USER_CREDENTIALS = {
 def check_login(username, password):
     return USER_CREDENTIALS.get(username) == password
 
-# Anmeldemaske
+# Anmeldestatus in Session State speichern
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    st.title("You´re all in ONE Retail AI - Solution aus dem Hause Hyperion")
-    st.subheader("Login")
+    # Logo anzeigen
+    st.markdown(
+        """
+        <div class="logo-container">
+            <img src="images/your_logo.png" alt="Logo">
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Anmeldemaske
+    st.markdown(
+        """
+        <div class="login-container">
+            <h2>You´re all in ONE Retail AI - Solution aus dem Hause Hyperion</h2>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     username = st.text_input("Benutzername")
     password = st.text_input("Passwort", type="password")
     login_button = st.button("Anmelden")
